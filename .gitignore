@@ -1,0 +1,19 @@
+### IDE ###
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+
+### Java / Maven (backend) ###
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+backend/*.class
+
+### OS ###
+.DS_Store
+
+### Frontend (uncomment once scaffolded) ###
+# frontend/node_modules/
+# frontend/dist/
+# frontend/.env
