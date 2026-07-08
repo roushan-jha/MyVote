@@ -2,6 +2,7 @@ package com.voting.voteSys.controller;
 
 import com.voting.voteSys.model.Poll;
 import com.voting.voteSys.service.PollService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,5 +25,12 @@ public class PollController {
     @GetMapping
     public List<Poll> getPolls() {
         return pollService.getAllPolls();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Poll> getPoll(@PathVariable Long id) {
+        return pollService.getPollById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 }
