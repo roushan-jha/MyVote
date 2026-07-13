@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root',
 })
 export class PollService {
-  private apiUrl = "http://localhost:8080/polls";
+  private apiUrl = "http://localhost:8080/v1/api/polls";
 
   constructor(private http: HttpClient) {}
 

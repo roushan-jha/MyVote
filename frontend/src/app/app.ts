@@ -1,9 +1,9 @@
 import { Component, signal } from '@angular/core';
-import { Poll } from './poll/poll';
+import { PollComponent } from './poll/poll';
 
 @Component({
   selector: 'app-root',
-  imports: [Poll],
+  imports: [PollComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
