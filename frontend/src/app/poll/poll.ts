@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { PollService } from '../poll.service';
 import { CreatePollRequest, Poll } from '../poll.models';
@@ -17,7 +17,7 @@ export class PollComponent implements OnInit {
   };
   optionCount = 2;
 
-  polls: Poll[] = [];
+  polls = signal<Poll[]>([]);
 
   constructor(private pollService: PollService) {}
 
@@ -60,12 +60,38 @@ export class PollComponent implements OnInit {
   loadPolls() {
     this.pollService.getPolls().subscribe({
       next: (data) => {
-        this.polls = data;
+        this.polls.set(data);
       },
       error: (error) => {
         console.log("Error while fetching polls!!", error);
       }
     });
+  }
+
+  vote(pollId: number, optionIndex: number) {
+    this.pollService.vote(pollId, optionIndex).subscribe({
+      next: () => {
+        console.log('Vote success for:', { pollId, optionIndex });
+        this.polls.update(polls =>
+          polls.map(poll => {
+            if (poll.id !== pollId) return poll;
+            return {
+              ...poll,
+              options: poll.options.map((opt, idx) =>
+                idx === optionIndex ? { ...opt, voteCount: opt.voteCount + 1 } : opt
+              )
+            };
+          })
+        );
+      },
+      error: (error) => {
+        console.log("Error while voting!!", error);
+      }
+    });
+  }
+
+  trackByPollId(index: number, poll: Poll): number {
+    return poll.id;
   }
 
   trackByIndex(index: number): number {

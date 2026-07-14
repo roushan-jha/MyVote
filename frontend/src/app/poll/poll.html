@@ -6,19 +6,20 @@
     </button>
   </div>
 
-  <div *ngIf="polls.length === 0" class="text-center text-muted py-5">
+  <div *ngIf="polls().length === 0" class="text-center text-muted py-5">
     No polls available yet.
   </div>
 
   <div class="row g-3">
-    <div *ngFor="let poll of polls" class="col-12 col-md-6 col-lg-4">
+    <div *ngFor="let poll of polls(); trackBy: trackByPollId" class="col-12 col-md-6 col-lg-4">
       <div class="card h-100 shadow-sm border-0">
         <div class="card-body">
           <h5 class="card-title mb-3">{{ poll.question }}</h5>
 
           <div class="d-flex flex-column gap-2">
             <button
-              *ngFor="let option of poll.options; let i = index"
+              *ngFor="let option of poll.options; let i = index; trackBy: trackByIndex"
+              (click)="vote(poll.id, i)"
               class="btn btn-outline-primary d-flex justify-content-between align-items-center px-3 py-2"
             >
               <span>{{ option.optionText }}</span>
