@@ -3,7 +3,7 @@ package com.voting.voteSys.service;
 import com.voting.voteSys.Repository.PollRepository;
 import com.voting.voteSys.model.OptionVote;
 import com.voting.voteSys.model.Poll;
-import org.apache.logging.log4j.util.Lazy;
+import com.voting.voteSys.model.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,7 +18,8 @@ public class PollService {
         this.pollRepository = pollRepository;
     }
 
-    public Poll createPoll(Poll poll) {
+    public Poll createPoll(Poll poll, User user) {
+        poll.setCreatedBy(user);
         return pollRepository.save(poll);
     }
 
@@ -32,31 +33,29 @@ public class PollService {
 
     public void vote(Long pollId, int optionIndex) {
 
-        // Get Poll from DB
         Poll poll = pollRepository.findById(pollId)
                 .orElseThrow(() -> new RuntimeException("Poll not found"));
 
-        // Get Options
         List<OptionVote> options = poll.getOptions();
 
-        // Validate Index
         if(optionIndex < 0 || optionIndex >= options.size()) {
             throw new IllegalArgumentException("Invalid option index");
         }
 
-        // Get Selected Option
         OptionVote selectedOption = options.get(optionIndex);
-
-        // Increment vote for selected option
         selectedOption.setVoteCount(selectedOption.getVoteCount() + 1);
 
-        // save to DB
         pollRepository.save(poll);
     }
 
-    public boolean deletePoll(Long id) {
-        if (!pollRepository.existsById(id)) {
+    public boolean deletePoll(Long id, User user) {
+        Optional<Poll> pollOpt = pollRepository.findById(id);
+        if (pollOpt.isEmpty()) {
             return false;
+        }
+        Poll poll = pollOpt.get();
+        if (!poll.getCreatedBy().getId().equals(user.getId())) {
+            throw new RuntimeException("You can only delete your own polls");
         }
         pollRepository.deleteById(id);
         return true;
