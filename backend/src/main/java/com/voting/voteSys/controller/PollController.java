@@ -44,7 +44,8 @@ public class PollController {
 
     @PostMapping("/vote")
     public void vote(@RequestBody Vote vote) {
-        pollService.vote(vote.getPollId(), vote.getOptionIndex());
+        User user = getCurrentUser();
+        pollService.vote(vote.getPollId(), vote.getOptionIndex(), user);
     }
 
     @DeleteMapping("/{id}")
